@@ -8,6 +8,7 @@ import re
 import base64
 import json
 import pickle
+import csv
 
 # Initial Setup
 
@@ -103,6 +104,35 @@ class User(Resource):
 			return "Invalid Username", 400
 
 
+class studentData(Resource):
+    def get(self):
+        Field = request.args.get('Field')
+        pValue = request.args.get('pValue')
+        allLines = []
+        headers = []
+        with open("../StudentData.csv", "r") as csvFile:
+            reader = csv.reader(csvFile)
+            headers = next(reader)
+            for row in reader:
+                allLines.append(row)
+
+        if(int(Field)==1):
+            retData = []
+            for line in allLines:
+                if(line[1].startswith(pValue)):
+                    retData.append(line[1])
+
+            return str(retData), 200
+
+        if(int(Field)==2):
+            retData = []
+            for line in allLines:
+                if(line[2].startswith(pValue)):
+                    retData.append(line[2])
+
+            return str(retData), 200
+
+
 #Predict Class
 class predictData(Resource):
 
@@ -147,7 +177,8 @@ api.add_resource(Login, "/api/v1/login", endpoint="login")
 api.add_resource(User, "/api/v1/users", endpoint="add user")
 api.add_resource(User, "/api/v1/users/<string:uname>", endpoint="delete")
 
-
+# Search Resource
+api.add_resource(studentData, "/api/v1/search", endpoint="search");
 #Predict Resource
 api.add_resource(predictData, "/api/v1/predict", endpoint="predict")
 
@@ -157,4 +188,4 @@ if __name__ == "__main__":
 
     sess.init_app(app)
     print("Point A")
-    app.run(debug=False, host="0.0.0.0", port=1000)
+    app.run(debug=True, host="0.0.0.0", port=70)
