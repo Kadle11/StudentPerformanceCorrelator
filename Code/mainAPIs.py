@@ -12,7 +12,6 @@ import csv
 
 # Initial Setup
 
-
 #Flask Setup
 app = Flask(__name__)
 api = Api(app)
@@ -20,12 +19,21 @@ api = Api(app)
 #Session Setup
 sess = Session()
 
+#Mongo Setup
+app.config["MONGO_URI"] = "mongodb://localhost:27017/WTUsers_db"
+mongo = PyMongo(app)
+
+def convertCursor(info):
+    data = []
+    for x in info:
+        data.append(x)
+    return data	
+
 #Login Class
 class Login(Resource):
 
 	def post(self):
 		data = request.get_json()
-
 		if(not(data)):
 			return "ERROR", 400
 
@@ -55,50 +63,45 @@ class User(Resource):
 	def get(self, uname=None):
 		if(uname):
 			return "", 405
-		user_info = mongo.db.user.find({}, {"_id": 0, "update_time": 0})
+		user_info = mongo.db.Users.find({}, {"_id": 0, "update_time": 0})
 		user_list = []
 		for user in user_info:
 			user_list.append(user["username"])
 		if(user_list == []):
 			return "No Users", 204
 		return user_list, 200
-
-
 	
 	def post(self, uname=None):
 		if(uname):
 			return "", 405
+
 		data = request.get_json()
 		if(not(data)):
 			return "ERROR", 400
 		else:
-		    uname = data.get('username')
-		    password = data.get('password')
-		    if(uname and password):
-		        if(checkSHA1(password)):
-		            x = mongo.db.user.find({'username': uname})
-		            y = convertCursor(x)
-		            if(y!=[]):
-		                return "username already exists.", 405
-		            else:
-		                mongo.db.user.insert_one(data)
-		                return {}, 201
-		        else:
-		        	return "password is not SHA", 400
-		    else:
-		    	return "username or password missing", 400
-		        
-
+			uname = data.get("username")
+			password = data.get("password")
+			if(uname and password):
+				x = mongo.db.Users.find({'username': uname})
+				if(convertCursor(x)!=[]):
+					return "Username Already Exists", 405
+				else:
+					mongo.db.Users.insert_one(data)
+					return "Inserted", 201
+			else:
+				return "Invalid Credentials", 400
+		
+                        
 	def delete(self, uname=None):
 		data = []
 		if(uname):
-			user_info = mongo.db.user.find({"username": uname})
+			user_info = mongo.db.Users.find({"username": uname})
 			data = convertCursor(user_info)
 			if(data==[]):
 			    return 'user not found', 405
 			else:
 			    data = strip(data)
-			    r = mongo.db.user.remove({"username": uname})
+			    r = mongo.db.Users.remove({"username": uname})
 			    return {}, 200
 		else:
 			return "Invalid Username", 400
@@ -121,7 +124,6 @@ class studentData(Resource):
             for line in allLines:
                 if(line[1].startswith(pValue)):
                     retData.append(line[1])
-
             return str(retData), 200
 
         if(int(Field)==2):
@@ -129,10 +131,16 @@ class studentData(Resource):
             for line in allLines:
                 if(line[2].startswith(pValue)):
                     retData.append(line[2])
-
             return str(retData), 200
 
-
+        if(int(Field)==3):
+           for line in allLines:
+                if((line[1].upper()==pValue.upper().strip("#")[0]) and (line[2].upper()==pValue.upper().strip("#")[1])):
+                    return str(line), 200
+           return "Student Not Found", 404
+			
+       
+       
 #Predict Class
 class predictData(Resource):
 
@@ -179,13 +187,14 @@ api.add_resource(User, "/api/v1/users/<string:uname>", endpoint="delete")
 
 # Search Resource
 api.add_resource(studentData, "/api/v1/search", endpoint="search");
+
 #Predict Resource
 api.add_resource(predictData, "/api/v1/predict", endpoint="predict")
 
 # Run the App
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'mongodb'
 
     sess.init_app(app)
-    print("Point A")
     app.run(debug=True, host="0.0.0.0", port=70)
