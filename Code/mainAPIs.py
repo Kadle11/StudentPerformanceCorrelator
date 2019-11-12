@@ -27,7 +27,7 @@ def convertCursor(info):
     data = []
     for x in info:
         data.append(x)
-    return data	
+    return data
 
 #Login Class
 class Login(Resource):
@@ -38,23 +38,20 @@ class Login(Resource):
 			return "ERROR", 400
 
 		else:
-
 			uname = data.get('username')
 			password = data.get('password')
-
 			if(not(uname and password)):
 				return "Enter Valid Credentials", 400
 
 			else:
 
-				x = mongo.db.user.find({'username': uname, 'password': password})
-				y = convertCursor(x)
+				x = mongo.db.Users.find({'username': uname, 'password': password})
 
-				if(y==[]):
-					return "Enter Valid Credential", 405
+				if(x.count()==0):
+					return "Enter Valid Credentials", 405
 
 				else:
-					return {}, 200
+					return "Authorization Successful", 200
 
 
 # User Class
@@ -70,7 +67,7 @@ class User(Resource):
 		if(user_list == []):
 			return "No Users", 204
 		return user_list, 200
-	
+
 	def post(self, uname=None):
 		if(uname):
 			return "", 405
@@ -83,15 +80,14 @@ class User(Resource):
 			password = data.get("password")
 			if(uname and password):
 				x = mongo.db.Users.find({'username': uname})
-				if(convertCursor(x)!=[]):
+				if(x.count()!=0):
 					return "Username Already Exists", 405
 				else:
 					mongo.db.Users.insert_one(data)
 					return "Inserted", 201
 			else:
 				return "Invalid Credentials", 400
-		
-                        
+
 	def delete(self, uname=None):
 		data = []
 		if(uname):
@@ -138,9 +134,29 @@ class studentData(Resource):
                 if((line[1].upper()==pValue.upper().strip("#")[0]) and (line[2].upper()==pValue.upper().strip("#")[1])):
                     return str(line), 200
            return "Student Not Found", 404
-			
-       
-       
+
+    def post(self):
+        data = request.get_json()
+        row = []
+        with open("../StudentData.csv", "r") as csvFile:
+            reader = csv.reader(csvFile)
+            next(reader)
+            allLines = []
+            for rowX in reader:
+                allLines.append(rowX[0])
+            row.append(int(allLines[-1])+1)
+        row.append(data.get("FName"));
+        row.append(data.get("LName"));
+        row.append(data.get("Math"));
+        row.append(data.get("Chem"));
+        row.append(data.get("Bio"));
+        row.append(data.get("CS"));
+        row.append(data.get("Sports"));
+        with open("../StudentData.csv", "a") as csvFile:
+                writer = csv.writer(csvFile)
+                writer.writerow(row)
+        return "Inserted", 200
+
 #Predict Class
 class predictData(Resource):
 
@@ -150,21 +166,21 @@ class predictData(Resource):
         Value = float(request.args.get('Score'))
         if(Value < 0):
             return "Invalid Score", 400
-        
+
         if(Subject.upper()==("MATH")):
             CM = pickle.load(open('../Models/CM.pkl', 'rb'));
             MS = pickle.load(open('../Models/MS.pkl', 'rb'));
             CompScore = CM.predict([[float(Value)]])[0][0];
             Sports = MS.predict([[float(Value)]])[0];
             return "CompScience: "+str(CompScore)+", Sports: "+str(Sports), 200
-        
+
         if(Subject.upper()==("COMPUTER SCIENCE")):
             MC = pickle.load(open('../Models/MC.pkl', 'rb'));
             SC = pickle.load(open('../Models/SC.pkl', 'rb'));
             MathScore = MC.predict([[float(Value)]])[0][0];
             Sports = SC.predict([[float(Value)]])[0];
             return "Math: "+str(MathScore)+", Sports: "+str(Sports), 200
-            
+
         if(Subject.upper()==("CHEMISTRY")):
             CB = pickle.load(open('../Models/CB.pkl', 'rb'));
             BioScore = CB.predict([[float(Value)]])[0][0];
@@ -181,15 +197,18 @@ class predictData(Resource):
 
 
 # Resources for User
-api.add_resource(Login, "/api/v1/login", endpoint="login")
-api.add_resource(User, "/api/v1/users", endpoint="add user")
-api.add_resource(User, "/api/v1/users/<string:uname>", endpoint="delete")
+api.add_resource(Login, "/api/v1/login", endpoint="Login")
+api.add_resource(User, "/api/v1/users", endpoint="Add User")
+api.add_resource(User, "/api/v1/users/<string:uname>", endpoint="Delete User")
 
 # Search Resource
-api.add_resource(studentData, "/api/v1/search", endpoint="search");
+api.add_resource(studentData, "/api/v1/search", endpoint="Search");
+
+#Add Student Resource
+api.add_resource(studentData, "/api/v1/student", endpoint="Add Student");
 
 #Predict Resource
-api.add_resource(predictData, "/api/v1/predict", endpoint="predict")
+api.add_resource(predictData, "/api/v1/predict", endpoint="Predict")
 
 # Run the App
 if __name__ == "__main__":
