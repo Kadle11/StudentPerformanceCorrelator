@@ -9,6 +9,8 @@ import base64
 import json
 import pickle
 import csv
+from matplotlib import pyplot as plt
+import pandas as pd
 
 # Initial Setup
 
@@ -196,6 +198,26 @@ class predictData(Resource):
 
 
 
+class correlateData(Resource):
+	def get(self):
+		S1 = request.args.get('S1')
+		S2 = request.args.get('S2')
+		df = pd.read_csv('../StudentData.csv')
+		fig, ax = plt.subplots()
+		ax.grid(True)
+		plt.xlabel(S1)
+		plt.ylabel(S2)
+		plt.xlim(0, 100)
+		plt.ylim(0, 100)
+		plt.scatter(df[S1], df[S2])
+		fig.savefig("/var/www/html/Plots/"+S1+"_vs_"+S2+".png")
+		#To access the Image go to http://localhost/<The URL in the Respose>	
+		return str(df.corr(method='pearson')[S1][S2])+", Plots/"+S1+"_vs_"+S2+".png", 200
+
+		
+
+		
+
 # Resources for User
 api.add_resource(Login, "/api/v1/login", endpoint="Login")
 api.add_resource(User, "/api/v1/users", endpoint="Add User")
@@ -209,6 +231,9 @@ api.add_resource(studentData, "/api/v1/student", endpoint="Add Student");
 
 #Predict Resource
 api.add_resource(predictData, "/api/v1/predict", endpoint="Predict")
+
+#Correlate Resource
+api.add_resource(correlateData, "/api/v1/correlate", endpoint="Correlate")
 
 # Run the App
 if __name__ == "__main__":
