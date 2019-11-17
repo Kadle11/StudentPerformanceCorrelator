@@ -4,6 +4,7 @@ from flask import Flask, request, session, Response
 from flask_restful import Api, Resource
 from flask_pymongo import PyMongo
 from flask_session import Session
+from flask_cors import CORS
 import re
 import base64
 import json
@@ -17,6 +18,7 @@ import pandas as pd
 #Flask Setup
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 #Session Setup
 sess = Session()
@@ -133,7 +135,7 @@ class studentData(Resource):
 
         if(int(Field)==3):
            for line in allLines:
-                if((line[1].upper()==pValue.upper().strip("#")[0]) and (line[2].upper()==pValue.upper().strip("#")[1])):
+                if((line[1].upper()==pValue.upper().split(",")[0]) and (line[2].upper()==pValue.upper().split(",")[1])):
                     return str(line), 200
            return "Student Not Found", 404
 
