@@ -27,12 +27,6 @@ sess = Session()
 app.config["MONGO_URI"] = "mongodb://localhost:27017/WTUsers_db"
 mongo = PyMongo(app)
 
-def convertCursor(info):
-    data = []
-    for x in info:
-        data.append(x)
-    return data
-
 #Login Class
 class Login(Resource):
 
@@ -122,21 +116,21 @@ class studentData(Resource):
         if(int(Field)==1):
             retData = []
             for line in allLines:
-                if(line[1].startswith(pValue)):
+                if(line[1].upper().startswith(pValue.upper())):
                     retData.append(line[1])
-            return str(retData), 200
+            return retData, 200
 
         if(int(Field)==2):
             retData = []
             for line in allLines:
-                if(line[2].startswith(pValue)):
+                if(line[2].upper().startswith(pValue.upper())):
                     retData.append(line[2])
-            return str(retData), 200
+            return retData, 200
 
         if(int(Field)==3):
            for line in allLines:
                 if((line[1].upper()==pValue.upper().split(",")[0]) and (line[2].upper()==pValue.upper().split(",")[1])):
-                    return str(line), 200
+                    return line, 200
            return "Student Not Found", 404
 
     def post(self):
@@ -168,32 +162,32 @@ class predictData(Resource):
 
         Subject = request.args.get('Subject')
         Value = float(request.args.get('Score'))
-        if(Value < 0):
+        if(Value < 0 or Value > 100):
             return "Invalid Score", 400
 
         if(Subject.upper()==("MATH")):
             CM = pickle.load(open('../Models/CM.pkl', 'rb'));
             MS = pickle.load(open('../Models/MS.pkl', 'rb'));
-            CompScore = CM.predict([[float(Value)]])[0][0];
+            CompScore = min(100, CM.predict([[float(Value)]])[0][0]);
             Sports = MS.predict([[float(Value)]])[0];
-            return "CompScience: "+str(CompScore)+", Sports: "+str(Sports), 200
+            return "Computer Science: "+str(CompScore)+", Sports: "+str(Sports), 200
 
         if(Subject.upper()==("COMPUTER SCIENCE")):
             MC = pickle.load(open('../Models/MC.pkl', 'rb'));
             SC = pickle.load(open('../Models/SC.pkl', 'rb'));
-            MathScore = MC.predict([[float(Value)]])[0][0];
+            MathScore = min(100, MC.predict([[float(Value)]])[0][0]);
             Sports = SC.predict([[float(Value)]])[0];
             return "Math: "+str(MathScore)+", Sports: "+str(Sports), 200
 
         if(Subject.upper()==("CHEMISTRY")):
             CB = pickle.load(open('../Models/CB.pkl', 'rb'));
-            BioScore = CB.predict([[float(Value)]])[0][0];
-            return "Bio: "+str(BioScore), 200
+            BioScore = min(100, CB.predict([[float(Value)]])[0][0]);
+            return "Biology: "+str(BioScore), 200
 
         if(Subject.upper()==("BIOLOGY")):
             BC = pickle.load(open('../Models/BC.pkl', 'rb'));
-            ChemScore = BC.predict([[float(Value)]])[0][0];
-            return "Chem: "+str(ChemScore), 200
+            ChemScore = min(100, BC.predict([[float(Value)]])[0][0]);
+            return "Chemistry: "+str(ChemScore), 200
 
         else:
             return "Invalid Subject", 405
@@ -205,16 +199,16 @@ class correlateData(Resource):
 		S1 = request.args.get('S1')
 		S2 = request.args.get('S2')
 		df = pd.read_csv('../StudentData.csv')
-		fig, ax = plt.subplots()
-		ax.grid(True)
 		plt.xlabel(S1)
 		plt.ylabel(S2)
 		plt.xlim(0, 100)
 		plt.ylim(0, 100)
 		plt.scatter(df[S1], df[S2])
-		fig.savefig("/var/www/html/Plots/"+S1+"_vs_"+S2+".png")
+		plt.savefig("/var/www/html/Plots/"+S1+"_vs_"+S2+".png")
+		plt.clf()
+		plt.close()
 		#To access the Image go to http://localhost/<The URL in the Respose>	
-		return str(df.corr(method='pearson')[S1][S2])+", Plots/"+S1+"_vs_"+S2+".png", 200
+		return [df.corr(method='pearson')[S1][S2], "Plots/"+S1+"_vs_"+S2+".png"], 200
 
 		
 
