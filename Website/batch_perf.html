@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+
+/*nav bar*/
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.icon {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: right;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.icon a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: rgb(0, 110, 122);
+  color: white;
+}
+
+.icon a.active {
+  background-color: rgb(0, 110, 122);
+  color: white;
+}
+
+.col-25 {
+  float: left;
+  width: 80%;
+  margin-top: 6px;
+}
+
+.col-75 {
+  float: left;
+  width: 50%;
+  margin-top: 6px;
+  position: absolute;
+  left:30%;
+}
+
+h2 {
+font-family: Lobster, “Open Sans”;
+}
+
+.image-txt-container {
+  display:flex;
+  align-items:center;
+  flex-direction: row;
+  padding-left: 200px
+}
+
+/*form*/
+
+input[type=submit] {
+  background-color: #333;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: center;
+}
+
+input[type=submit]:hover {
+  background-color: rgb(0, 110, 122);
+}
+
+.icon{
+  background-color: #333;
+  position: absolute;
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+}
+
+</style>
+</head>
+<body>
+
+<!-- nav bar -->
+<script type="text/javascript" src="batch_perf.js"></script>
+
+<div class="topnav">
+  <a class="active" href="login.html">Logout</a>
+  <a href="add_student.html">Add Student</a>
+  <a href="batch_perf.html">Batch Performance</a>
+  <a href="predict.html">Predictor</a>
+  <a href="page1.html" class="icon">
+          <span class="glyphicon glyphicon-education"></span>
+  </a>
+</div>
+
+<!-- form -->
+<div class="container">
+    <center>
+      <form >
+
+        <div class="row">
+          <div class="col-25">
+            <label for="Category 1">Category 1</label>
+          </div>
+          <div class="col-75">
+              <select name="Category 1" class="Cat1" id="cat1">
+                <option value="Math">Math</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Sports">Sports</option>
+              </select>
+          </div>
+      </div>
+
+      <!--   <form action="/action_page.php"> -->
+        <div class="row">
+          <div class="col-25">
+            <label for="Category 2">Category 2</label>
+          </div>
+          <div class="col-75">
+              <select name="Category 2" class="Cat2" id="cat2">
+                <option value="Chemistry">Chemistry</option>
+                <option value="Math">Math</option>
+                <option value="Biology">Biology</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Sports">Sports</option>
+              </select>
+          </div>
+      </div>
+        <br><br>
+        <button type="button" class="btn btn-info" onclick="correlate()">Correlate</button>
+
+      </form>
+  </center>
+</div>
+
+<div class="image-txt-container">
+  <img id = "image" class="result1">
+  <h2 id="result"></h2>
+</div>
+
+</body>
+</html>

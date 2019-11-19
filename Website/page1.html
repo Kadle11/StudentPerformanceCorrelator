@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+ 
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+/*nav bar*/
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.icon {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topnav a {
+  float: right;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.icon a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: rgb(0, 110, 122);
+  color: white;
+}
+
+.icon a.active {
+  background-color: rgb(0, 110, 122);
+  color: white;
+}
+
+/*for form*/
+
+input[type=text], select, textarea {
+  width: 50%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+input[type=submit] {
+  background-color: #333;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: center;
+}
+
+input[type=submit]:hover {
+  background-color: rgb(0, 110, 122);
+}
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+.col-25 {
+  float: left;
+  width: 40%;
+  margin-top: 6px;
+}
+
+.col-75 {
+  float: left;
+  width: 60%;
+  margin-top: 6px;
+  position: absolute;
+  left:30%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.icon{
+  background-color: #333;
+  position: absolute;
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+}
+.table{
+  visibility:hidden;
+  font-size:20px;
+  border-radius: 5px;
+
+}
+/*
+.container2{
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 50%;
+
+}
+*/
+
+table, td ,th{
+  border: 1px solid black;
+  text-align: center;
+  align-self: center;
+}
+
+</style>
+</head>
+<body>
+
+<!-- nav bar -->
+<script type="text/javascript" src="page1.js"></script>
+
+<div class="topnav">
+  <a class="active" href="login.html">Logout</a>
+  <a href="add_student.html">Add Student</a>
+  <a href="batch_perf.html">Batch Performance</a>
+  <a href="predict.html">Predictor</a>
+  <a href="page1.html" class="icon">
+          <span class="glyphicon glyphicon-education"></span>
+  </a>
+</div>
+
+<!-- form -->
+
+<div class="container">
+  <center>
+  <form>
+  <div class="row">
+    <div class="col-25">
+      <label for="fname">First Name</label>
+    </div>
+    <div class="col-75">
+      <input type="text" id = "fname" list="datalist1" onkeypress="obj.getTerm(1)">     
+      <datalist id="datalist1"> 
+  
+      <!-- This data list will be edited through javascript     -->
+      </datalist> 
+      
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-25">
+      <label for="lname">Last Name</label>
+    </div>
+    <div class="col-75">
+      <input type="text" id = "lname" list="datalist2" onkeypress="obj.getTerm(2)"> 
+      <datalist id="datalist2"> 
+  
+      <!-- This data list will be edited through javascript     -->
+      </datalist> 
+    </div>
+  </div>
+  
+  <br/>
+  <div class="row">
+    <input type="button" id="submit" value="Submit" onclick="Search()" >
+  </div>
+  </form>
+</center>
+</div>
+<br/>
+
+<table id="result" class="table">
+  <tr>
+    <th>Sl no</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Math</th>
+    <th>Chemistry</th>
+    <th>Biology</th>
+    <th>Computer Science</th>
+    <th>Sports</th>
+  </tr>
+  <tr>
+    <td id ="a"></td>
+    <td id ="b"></td>
+    <td id ="c"></td>
+    <td id ="d"></td>
+    <td id ="e"></td>
+    <td id ="f"></td>
+    <td id ="g"></td>
+    <td id ="h"></td>
+  </tr>
+  
+</table>
+</div>
+<br>
+</body>
+</html>
